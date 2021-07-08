@@ -8,7 +8,7 @@ from config import *
 from stats_gen import *
 
 
-# Turns THe Default Spotify String Representation of Datetime into A 'Datetime' Object
+# Turns The Default Spotify String Representation of Datetime into A 'Datetime' Object
 def str_to_datetime(str_dt: str):
     timestamp = str_dt.split('T')
     date = timestamp[0]
@@ -88,7 +88,8 @@ if os.path.exists("songs_played.json"):
     # Find The Recently Played Songs That Have Not Yet Been Recorded In 'songs_played.json'
     # ie. All The Songs That Have Been Played AFTER The Time Of The Last Played Song
     # Add Them To Our Records By Appending To 'prev' Lists
-    for i in range(0, 50):
+    i = 0
+    while i < len(times):
         if times[i] <= time_lp_dt_obj:
             continue
         else:
@@ -98,6 +99,7 @@ if os.path.exists("songs_played.json"):
             prev_times.append(times[i].strftime('%d/%m/%y %H:%M:%S'))
             prev_durations_ms.append(durations_ms[i])
             prev_track_ids.append(track_ids[i])
+        ++i
     # Turn The Newly Updated Data Back Into A Dictionary
     songs_data_dict = {
         'song_names': prev_song_names,
@@ -123,6 +125,9 @@ else:
         'track_ids': track_ids
     }
 
+# Turn Our Dictionary Back Into A json File
+with open('songs_played.json', 'w') as songs_played_file:
+     json.dump(songs_data_dict, songs_played_file)
 
 # Send E-Mail If Its The Last Day of The Week
 today = dt.datetime.today()
@@ -130,7 +135,7 @@ yesterday = today - dt.timedelta(1)
 week_ago = today - dt.timedelta(7)
 time_now = dt.datetime.now().time()
 
-if today.weekday() == 5 and dt.time(0, 0) < time_now < dt.time(0, 10): # Run this once every Sat between 00:00 and 00:10
+if today.weekday() == 5 and dt.time(0, 0) <= time_now <= dt.time(0, 14): # Run this once every Sat between 00:00 and 00:14
     # Generate The Stats To Be Sent In Email
     weekly_tracks = create_track_list(songs_data_dict)
     # Generate Playlist Of Weekly Songs
@@ -142,6 +147,10 @@ if today.weekday() == 5 and dt.time(0, 0) < time_now < dt.time(0, 10): # Run thi
     for track in weekly_tracks:
         if track[3] not in track_ids:
             track_ids.append(track[3])
+    if len(track_ids) >= 100:
+        while len(track_ids) >= 100:
+            sp.playlist_add_items(playlist_id=playlist['id'], items=track_ids[0:100])
+            del track_ids[0:100]
     sp.playlist_add_items(playlist_id=playlist['id'], items=track_ids)
     num_songs_played = len(weekly_tracks)
     calc_most_freq_song_result = calc_most_freq_played_song(weekly_tracks)
@@ -166,7 +175,3 @@ if today.weekday() == 5 and dt.time(0, 0) < time_now < dt.time(0, 10): # Run thi
                 f"Check Out Your Weekly Playlist: {playlist_url}"
         )
     os.remove('songs_played.json')
-
-# Turn Our Dictionary Back Into A json File
-with open('songs_played.json', 'w') as songs_played_file:
-     json.dump(songs_data_dict, songs_played_file)
