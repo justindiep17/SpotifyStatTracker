@@ -89,8 +89,10 @@ if os.path.exists("songs_played.json"):
     # ie. All The Songs That Have Been Played AFTER The Time Of The Last Played Song
     # Add Them To Our Records By Appending To 'prev' Lists
     i = 0
-    while i < len(times):
+    times_len = len(times)
+    while i < times_len:
         if times[i] <= time_lp_dt_obj:
+            i += 1
             continue
         else:
             prev_song_names.append(song_names[i])
@@ -99,7 +101,7 @@ if os.path.exists("songs_played.json"):
             prev_times.append(times[i].strftime('%d/%m/%y %H:%M:%S'))
             prev_durations_ms.append(durations_ms[i])
             prev_track_ids.append(track_ids[i])
-        ++i
+            i += 1
     # Turn The Newly Updated Data Back Into A Dictionary
     songs_data_dict = {
         'song_names': prev_song_names,
