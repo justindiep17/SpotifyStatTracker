@@ -15,4 +15,4 @@ In addition to generating stats about a user's listening habits, the program wil
 
 **NOTE**
 
-In order for this program to work, a config.py needs to be implemented by the current user. All constants from config.py, such as TO_EMAIL and FROM_EMAIL, must be filled in by that user. As well, the user must connect themselves to the Spotify API and obtain an OAuth Token.
+In order for this program to work, a config.py needs to be implemented by the current user. All constants from config.py, such as TO_EMAIL and FROM_EMAIL, must be filled in by that user. As well, the user must connect themselves to the Spotify API.
