@@ -12,3 +12,6 @@ At the end of every week, the program will parse the data from the json file and
   - Number of Minutes Listened
 
 In addition to generating stats about a user's listening habits, the program will generate a custom playlist of each unique song played by the use that week. This playlist will then be added directly to the user's Spotify profile. Using the smtplib library, a custom email with the listenings stats and a link to the playlist are sent to the user's email. Once this is all complete, the program wipes the previous week's data and starts tracking anew.
+
+*NOTE*
+In order for this program to work, a config.py needs to be implemented by the current user. All constants from config.py, such as TO_EMAIL and FROM_EMAIL, must be filled in by that user. As well, the user must connect themselves to the Spotify API and obtain an OAuth Token.
